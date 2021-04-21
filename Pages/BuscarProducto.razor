@@ -1,0 +1,81 @@
+﻿@page "/BuscarPorSku"
+@inject IProductService service
+
+
+<h3>Buscar producto por SKU</h3>
+
+<table class="table">
+    <tr>
+        <td>SKU Code</td>
+        <td><input type="text" @bind="sku" /></td>
+        <td>
+            <button class="btn btn-success" @onclick="BuscarSku">Buscar</button>&nbsp;&nbsp;
+            <button class="btn btn-danger" @onclick="Limpiar">Limpiar</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+    </tr>
+</table>
+    @if (pro.id != 0)
+    {
+        <table class="table">
+        <thead>
+            <tr>
+                <th>SKU Code</th>
+                <th>Descripcion</th>
+                <th>Cantidad en Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@pro.sku_number</td>
+                <td>@pro.description</td>
+                <td>@pro.quantity</td>
+            </tr>
+        </tbody>
+            </table>
+    }
+    @if (shownotFound)
+    {
+        <div class="alert alert-danger" role="alert">
+            @msj
+        </div>
+    }
+
+
+@code {
+
+    string sku = "";
+    Producto pro = new Producto();
+    bool shownotFound = false;
+    string msj = "";
+
+    protected async Task BuscarSku()
+    {
+        if (sku != "")
+        {
+            pro = await service.GetBySku(sku);
+            shownotFound = false;
+        }
+
+        if (pro.id == 0 && sku != "")
+        {
+            msj = $"No se encontro ningun producto con el sku code : {sku}";
+            shownotFound = true;
+        }
+        else if (sku ==""){
+            msj = "Debe escribir un codigo de sku para buscar.";
+            pro = new Producto();
+            shownotFound = true;
+        }
+    }
+
+    protected void Limpiar()
+    {
+        sku = "";
+        pro = new Producto();
+        shownotFound = false;
+        msj = "";
+    }
+}

@@ -1,0 +1,45 @@
+﻿@page "/"
+@inject IProductService productservice
+
+
+<h3>Inventario de Productos</h3>
+
+
+@if (productos == null)
+{
+    <p><em>Loading .....</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>SKU Code</th>
+                <th>Descripcion</th>
+                <th>Cantidad en Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prod in productos)
+            {
+            <tr>
+                <td>@prod.sku_number</td>
+                <td>@prod.description</td>
+                <td>@prod.quantity</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code{
+    IEnumerable<Producto> productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await productservice.GetAllProducts();
+    }
+}
+
